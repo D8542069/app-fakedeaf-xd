@@ -1,9 +1,9 @@
 @use "../../mixins";
 
 .footer {
-  background-color: #000000;
+  background-color: var(--bg-color);
   padding: 41px 20px;
-  border: 2px solid #BF0202;
+  border: 2px solid var(--border-red);
   border-bottom: none;
   &__futa-container {
     @include  mixins.flex(row, start, center, nowrap);
@@ -13,12 +13,12 @@
     @include mixins.flex(column, start, start, nowrap);
   }
   &__futa-logo > h2{
-    color: #BF0202;
+    color: var(--accent-red);
     font-size: 22px;
     font-weight: 700;
   }
   &__futa-logo > h3{
-    color: #FFFFFF;
+    color: var(--secondary-text-color);
     font-size: 16px;
   }
   &__links {
@@ -30,9 +30,23 @@
     gap: 5px;
   }
   &__links-container > p {
-    color: #C2C2C2;
+    color: var(--secondary-text-color);
   }
   &__links > p {
-    color: #C2C2C2;
+    color: var(--secondary-text-color);
   }
 }
+
+//.light-theme-footer {
+//  background-color: #FFFFFF;
+//  color: #000000;
+//  border: 1px solid #000000;
+//  border-bottom: none;
+//
+//  .footer__futa-logo > h2 {
+//    color: #8B0000;
+//  }
+//  .footer__futa-logo > h3 {
+//    color: #000000;
+//  }
+//}

@@ -31,8 +31,8 @@
   &__info-logout {
     border-radius: 30px;
     padding: 7px 40px;
-    background-color: #000000;
-    border: 2px solid #BF0202;
+    background-color: var(--bg-color);
+    border: 2px solid var(--accent-red);
   }
   &__info-when-was-online {
     @include mixins.flex(row, center, center, nowrap);

@@ -583,6 +583,36 @@ function initCategoryFilters() {
     });
 }
 
+function initTiltEffect() {
+    const container = document.querySelector('.films-page__films-container');
+    if (!container) return;
+
+    container.addEventListener('mousemove', (e) => {
+        const card = e.target.closest('.films-page__film-card-cont');
+        if (!card) return;
+
+        const rect = card.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = (centerY - y) / 15;
+        const rotateY = (x - centerX) / 15;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+    });
+
+    container.addEventListener('mouseleave', (e) => {
+        const card = e.target.closest('.films-page__film-card-cont');
+        if (card) {
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+        }
+    }, true);
+}
+
 async function loadCategoryWithFilter(filterObj) {
 
     const baseUrl = `/api/animation/find-animation`;
@@ -864,19 +894,65 @@ async function loadMovieDetails() {
 //     }
 // }
 
+// const changeThemeBtn = document.querySelector('#theme-toggle');
+// const headerElement = document.querySelector('.header');
+// const mainSliderElement = document.querySelector('.main__films')
+// const mainSideBarElement = document.querySelector('.suggestions-page__suggestions');
+// const mainSuggestionsPageElement = document.querySelector('.suggestions-page__films-page');
+// const footerElement = document.querySelector('.footer');
+// const mainSignInForms = document.querySelector('.main__forms')
+//
+// changeThemeBtn.addEventListener('click', (e) => {
+//     e.preventDefault();
+//     headerElement.classList.toggle('light-theme-header');
+//     mainSliderElement.classList.toggle('light-theme-main');
+//     mainSideBarElement.classList.toggle('light-theme-main');
+//     mainSuggestionsPageElement.classList.toggle('light-theme-main');
+//     footerElement.classList.toggle('light-theme-footer');
+//     signInWindowElement.classList.toggle('light-theme-main');
+//     signUpWindowElement.classList.toggle('light-theme-main');
+//     mainSignInForms.classList.toggle('light-theme-main');})
 
+const themeToggle = document.querySelector('#theme-toggle');
+const body = document.body;
+
+function toggleTheme() {
+
+    body.classList.toggle('light-theme');
+
+    if (body.classList.contains('light-theme')) {
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+function checkSavedTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') {
+        body.classList.add('light-theme');
+    }
+}
+
+checkSavedTheme();
+
+if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+}
 
 if (window.location.pathname.includes('movieframe.html')) {
     loadMovieDetails();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Скрипт запущен:", window.location.pathname);
+    console.log(window.location.pathname);
 
     // 1. Инициализация общих компонентов
     checkAuth();
     initLogout();
     initCategoryFilters();
+
+    initTiltEffect();
 
     initDropdownFilters();
 

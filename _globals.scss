@@ -1,9 +1,45 @@
+:root {
+  --main-bg-image: url("./images/bg-body-image.png");
+  --main-text-color: #ffffff;
+  --bg-color: #000000;
+  --accent-red: #BF0202;
+  --card-bg: #161616;
+  --bg-level-1: #0C0C0C;
+  --bg-level-2: #161616;
+  --bg-level-3: #252525;
+  --secondary-text-color: #ADADAD;
+  --border-color: #5F5F5F;
+  --select-bg: #252525;
+  --modal-bg: #000000;
+  --border-red-header: #BF0202;
+  --border-red: #BF0202;
+}
+
+body.light-theme {
+  --main-text-color: #000000;
+  --bg-color: #f5f5f5;
+  --accent-red: #8B0000;
+  --card-bg: #ffffff;
+  --bg-level-1: #F0F0F0;
+  --bg-level-2: #F9F9F9;
+  --bg-level-3: #FFFFFF;
+  --secondary-text-color: #555555;
+  --border-color: #D1D1D1;
+  --select-bg: #D1D1D1;
+  --modal-bg: #D1D1D1;
+  --border-red-header: #000000;
+  --border-red: #000000;
+}
+
 * {
-  color: white;
+  color: var(--main-text-color);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 body {
-  background-image: url("./images/bg-body-image.png");
+  background-image: var(--main-bg-image);
+  background-color: var(--bg-color);
+
   padding: 0 120px;
   display: flex;
   flex-direction: column;
@@ -12,7 +48,7 @@ body {
   font-family: 'Montserrat', sans-serif;
 }
 
-body>*{
+body > * {
   width: 100%;
   max-width: 1920px;
 }

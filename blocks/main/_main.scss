@@ -26,7 +26,7 @@
     display: none;
     flex-direction: column;
     padding: 34px 25px;
-    background-color: #000000;
+    background-color: var(--modal-bg);;
     gap: 11px;
     border-radius: 10px;
     border: solid 2px #5F5F5F;
@@ -38,8 +38,7 @@
   }
   &__nav-bar {
     width: 100%;
-    @include mixins.flex(row, space-between, start, nowrap);
-    gap: 66px;
+    @include mixins.flex(row, space-between, center, nowrap);
   }
   &__nav-btns {
     @include mixins.flex(row, start, start, nowrap);
@@ -48,9 +47,10 @@
   &__forms {
     @include mixins.flex(column, center, center, nowrap);
     padding: 10px;
-    background-color: #222121;
+    background-color: var(--modal-bg);
     border-radius: 10px;
     gap: 25px;
+    border: solid 2px #5F5F5F;
   }
   &__formsin {
     @include mixins.flex(column, center, start, nowrap);
@@ -65,23 +65,24 @@
     gap: 4px;
   }
   &__login > input{
-    background-color: #3F3D3D;
+    background-color: var(--bg-color);
     padding: 7px 10px;
     border-radius: 5px;
     border: solid 1px #5F5F5F;
   }
   &__pass-btn {
     width: 100%;
-    background-color: #5F5F5F;
+    background-color: var(--bg-color);
     padding: 8px 0;
     border-radius: 5px;
+    border: solid 1px #5F5F5F;
   }
 
   &__signup {
     display: none;
     flex-direction: column;
     padding: 34px 25px;
-    background-color: #000000;
+    background-color: var(--modal-bg);;
     gap: 11px;
     border-radius: 10px;
     border: solid 2px #5F5F5F;
@@ -97,7 +98,7 @@
     width: 100%;
     @include mixins.flex(row, start, center, nowrap);
     padding: 26px 22px;
-    background-color: #252525;
+    background-color: var(--bg-level-3);
     gap: 33px;
   }
   &__suggestions-page {
@@ -156,7 +157,7 @@
   &__suggestions {
     width: 200px;
     height: auto;
-    background-color: #0C0C0C;
+    background-color: var(--bg-level-1);
     @include mixins.flex(column, start, start, nowrap);
     padding: 20px 28px;
     gap: 30px;
@@ -194,7 +195,7 @@
   &__films-page {
     width: 100%;
     @include mixins.flex(column, start, center, wrap);
-    background-color: #161616;
+    background-color: var(--bg-level-2);
     padding: 36px 49px;
     gap: 30px;
   }
@@ -216,12 +217,15 @@
   }
   &__grid-cont > select {
     width: 200px;
-    background-color: #353535;
+    background-color: var(--select-bg);;
     padding: 9px 5px;
     border-radius: 5px;
   }
   &__recently-films {
+    width: 90%;
     font-size: 26px;
+    display: flex;
+    justify-content: space-between;
   }
   &__films-container {
     width: 100%;
@@ -231,6 +235,7 @@
     justify-content: center;
     row-gap: 20px;
     column-gap: 50px;
+    perspective: 1000px;
   }
   &__film-card-cont {
     @include mixins.flex(column, center, start, nowrap);
@@ -238,16 +243,24 @@
     overflow: hidden;
     text-overflow: ellipsis;
     gap: 10px;
+    transition: transform 0.2s ease-out;
+    will-change: transform; // Подсказка браузеру для оптимизации
+    transform-style: preserve-3d;
+  }
+  &__film-card-cont:hover {
+    //transform: scale(0.9);
+    transition: transform 0.8s ease;
+    border: 1px solid gold;
   }
   &__film-image > a > img {
     width: 138px;
     height: 207px;
   }
-  &__film-image:hover {
-    transform: scale(0.9);
-    transition: transform 0.8s ease;
-    border: 1px solid gold;
-  }
+  //&__film-image:hover {
+  //  transform: scale(0.9);
+  //  transition: transform 0.8s ease;
+  //  border: 1px solid gold;
+  //}
   &__card-title {
     white-space: nowrap;
     overflow: hidden;
@@ -268,7 +281,7 @@
   &__pagination-btn {
     width: 40px;
     height: 40px;
-    border: 2px solid #BF0202;
+    border: 2px solid var(--accent-red);
     border-radius: 30px;
     transform: scale(0.9);
   }
@@ -277,6 +290,82 @@
   }
 
 }
+
+//.light-theme-main {
+//  background-color: #FFFFFF;
+//  color: #000000;
+//  border: 1px solid #000000;
+//
+//  .films__title-container > h2 {
+//    color: #000000;
+//  }
+//  .films__title-container > p {
+//    color: #000000;
+//  }
+//  .suggestions-page__abt-watch > h2 {
+//    color: #000000;
+//  }
+//  .suggestions-page__abt-watch2 > h2 {
+//    color: #000000;
+//  }
+//  .films-page__recently-films > h2 {
+//    color: #000000;
+//  }
+//  .films-page__random-film-btn > button {
+//    color: #000000;
+//  }
+//  .films-page__card-title {
+//    color: #000000;
+//  }
+//  .add-favorite {
+//    background-color: #0C0C0C;
+//    border: 2px solid #000000;
+//    border-radius: 30px;
+//  }
+//  .films-page__pagination-btn {
+//    color: #000000;
+//  }
+//  .main__signin-button-signin {
+//    color: #000000;
+//  }
+//  .main__signin-button-signup {
+//    color: #000000;
+//  }
+//  .main__signup-button-signin {
+//    color: #000000;
+//  }
+//  .main__signup-button-signup {
+//    color: #000000;
+//  }
+//  .exit-signin {
+//    background-color: #8B0000;
+//    border-radius: 30px;
+//    padding: 5px;
+//  }
+//  .exit-signup {
+//    background-color: #8B0000;
+//    border-radius: 30px;
+//    padding: 5px;
+//  }
+//  .main__login > label {
+//    color: #000000;
+//  }
+//  .main__login > input {
+//    color: #000000;
+//    background-color: #ffffff;
+//  }
+//  .main__signup > label {
+//    color: #000000;
+//  }
+//  .main__login > input {
+//    color: #000000;
+//    background-color: #ffffff;
+//  }
+//  .main__forms {
+//    background-color: #FFFFFF;
+//    border: 1px solid #000000;
+//  }
+//}
 
 
 
