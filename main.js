@@ -1,12 +1,13 @@
 import './styles.scss'
 import heart from "./blocks/header/icons/Heart.png"
 
+let allMoviesGlobal = [];
+
 function checkAuth() {
     const rawData = localStorage.getItem('user');
     const headerBtn = document.querySelector('.buttons__button'); // Кнопка "Войти"
     const heartIcon = document.querySelector('.buttons__heart-icon'); // Иконка профиля
 
-    // Если нет элементов хедера, выходим
     if (!headerBtn && !heartIcon) return;
 
     const isLoggedIn = rawData && rawData !== 'undefined' && rawData !== 'null';
@@ -38,7 +39,6 @@ function handleProfilePage() {
 
     let userData = null;
 
-    // 1. Извлекаем данные
     if (rawData && rawData !== 'undefined' && rawData !== 'null') {
         try {
             const parsed = JSON.parse(rawData);
@@ -48,7 +48,6 @@ function handleProfilePage() {
         }
     }
 
-    // 2. Если пришли из URL — сохраняем
     if (userFromUrl) {
         if (!userData) userData = {};
         userData.login = userFromUrl;
@@ -56,14 +55,12 @@ function handleProfilePage() {
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // 3. Защита от вылета (если данных нет)
     if (!userData || !userData.login) {
         console.warn("Данных пользователя не найдено. Редирект...");
         window.location.href = 'index.html';
         return;
     }
 
-    // 4. Отрисовка
     const nameElem = document.querySelector('#profile-login');
     const dateElem = document.querySelector('#profile-reg-date');
 
@@ -79,7 +76,6 @@ function handleProfilePage() {
 }
 
 async function addToFavorites(movieId) {
-    //movieId приходит как число, но бэк может ждать строку, приведем на всякий случай
     const idToSend = String(movieId);
 
     try {
@@ -99,7 +95,6 @@ async function addToFavorites(movieId) {
         if (result.isFavorited === true || result.success === true) {
             alert("Фильм добавлен в избранное!");
         } else {
-            // Если сервер вернул 500 или ошибку
             alert("Не удалось добавить. Возможно, фильм уже в избранном или нужно войти в аккаунт.");
         }
     } catch (error) {
@@ -108,7 +103,6 @@ async function addToFavorites(movieId) {
     }
 }
 
-// Инициализация кнопок (вызывается внутри displayMovies)
 function initFavoriteButtons() {
     const favBtns = document.querySelectorAll('.add-favorite');
     favBtns.forEach(btn => {
@@ -131,7 +125,6 @@ async function loadUserFavorites() {
             credentials: 'include'
         });
 
-        // Если прилетел 401 — значит сессия пустая
         if (response.status === 401) {
             favContainer.innerHTML = '<p>Пожалуйста, войдите в аккаунт, чтобы увидеть избранное</p>';
             return;
@@ -221,39 +214,6 @@ if (signInFormElement) {
     });
 }
 
-// const signInFormElement = document.querySelector('.main__formsin');
-//
-// signInFormElement.addEventListener('submit', async (event) => {
-//     event.preventDefault();
-//
-//     const formData = new FormData(signInFormElement);
-//     const formDataObject = Object.fromEntries(formData);
-//
-//     fetch('http://89.109.16.50:7002/auth/login', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(formDataObject)
-//         })
-//         .then ((response) => {
-//             console.log(response.status);
-//             return response.json();
-//         })
-//         .then((json) => {
-//             console.log(json);
-//             if (json.success === true) {
-//                 localStorage.setItem('user', JSON.stringify(json.data))
-//                 window.location.href = 'index.html';
-//             } else {
-//                 alert('bomba(((')
-//             }
-//         })
-//     .catch((error) => {
-//         console.log(error);
-//     })
-// })
-
 async function logOut() {
     try {
         await fetch('/api/auth/logout', {
@@ -284,11 +244,6 @@ const modalWindowElement = document.querySelector('.main__modal-window')
 const signInButtonElement = document.querySelector('.buttons__button')
 const signInWindowElement = document.querySelector('.main__signin')
 
-
-// signInButtonElement.addEventListener('click', () => {
-//     modalWindowElement.classList.add('open')
-//     signInWindowElement.classList.add('open')
-// })
 if (signInButtonElement) {
     signInButtonElement.addEventListener('click', () => {
         modalWindowElement.classList.add('open');
@@ -299,10 +254,6 @@ if (signInButtonElement) {
 const signUpWindowElement = document.querySelector('.main__signup')
 const signUpButtonFormElement = document.querySelector('.main__signup-button-signin')
 
-// signUpButtonFormElement.addEventListener('click', () => {
-//     signInWindowElement.classList.remove('open')
-//     signUpWindowElement.classList.add('open')
-// })
 if (signUpButtonFormElement) {
     signUpButtonFormElement.addEventListener('click', () => {
         signInWindowElement.classList.remove('open');
@@ -313,10 +264,6 @@ if (signUpButtonFormElement) {
 
 const signInButtonFormElement = document.querySelector('.main__signin-button-signup')
 
-// signInButtonFormElement.addEventListener('click', () => {
-//     signUpWindowElement.classList.remove('open')
-//     signInWindowElement.classList.add('open')
-// })
 if (signInButtonFormElement) {
     signInButtonFormElement.addEventListener('click', () => {
         signUpWindowElement.classList.remove('open');
@@ -327,10 +274,6 @@ if (signInButtonFormElement) {
 
 const exitSignInButtonElement = document.querySelector('.exit-signin')
 
-// exitSignInButtonElement.addEventListener('click', () => {
-//     modalWindowElement.classList.remove('open')
-//     signInWindowElement.classList.remove('open')
-// })
 if (exitSignInButtonElement) {
     exitSignInButtonElement.addEventListener('click', () => {
         modalWindowElement.classList.remove('open');
@@ -341,10 +284,6 @@ if (exitSignInButtonElement) {
 
 const exitSignUpButtonElement = document.querySelector('.exit-signup')
 
-// exitSignUpButtonElement.addEventListener('click', () => {
-//     modalWindowElement.classList.remove('open')
-//     signUpWindowElement.classList.remove('open')
-// })
 if (exitSignUpButtonElement) {
     exitSignUpButtonElement.addEventListener('click', () => {
         modalWindowElement.classList.remove('open');
@@ -372,25 +311,20 @@ async function pagination(page = 1) {
 
     const url = new URL('/api/animation/find-animation', window.location.origin);
 
-    // 1. Пагинация
     url.searchParams.append('page', page);
     url.searchParams.append('limit', 10);
 
-    // 2. Сортировка (sortBy и order — бэкенд их поддерживает!)
     url.searchParams.append('sortBy', currentFilters.sortBy || 'id');
     url.searchParams.append('order', currentFilters.order || 'desc');
 
-    // 3. Категория (film, serial, multfilm, anime)
     if (currentFilters.category) {
         url.searchParams.append('category', currentFilters.category);
     }
 
-    // 4. Теги (tag)
     if (currentFilters.tag) {
         url.searchParams.append('tag', currentFilters.tag);
     }
 
-    // 5. Поиск (search)
     if (currentFilters.search) {
         url.searchParams.append('search', currentFilters.search);
     }
@@ -401,6 +335,7 @@ async function pagination(page = 1) {
         const response = await fetch(url);
         const result = await response.json();
         if (result.success) {
+            allMoviesGlobal = result.data
             displayMovies(result.data);
             renderPagination(result.meta.totalPages, result.meta.page);
         }
@@ -408,28 +343,6 @@ async function pagination(page = 1) {
         console.error("Ошибка пагинации:", error);
     }
 }
-
-// function displayMovies(moviesToDisplay) {
-//     const container = document.querySelector('.films-page__films-container');
-//     container.innerHTML = '';
-//
-//     moviesToDisplay.forEach(movie => {
-//         const movieElement = `
-//         <div class="films-page__film-card-cont">
-//             <div class="films-page__film-image">
-//                <a href="movieframe.html?id=${movie.id}">
-//                    <img src="${movie.imageLink}">
-//                </a>
-//             </div>
-//                 <h2 class="films-page__card-title">${movie.name}</h2>
-//                 <div class="films-page__card-section">
-//                     <h3 style="font-size: 14px; color: #808080;">${movie.category}</h3>
-//                     <button class="add-favorite" data-id="${movie.id}"><img style="width: 20px; height: 20px;" src="./blocks/header/icons/Heart.png"></button>
-//                 </div>
-//            </div>`;
-//         container.insertAdjacentHTML('beforeend', movieElement);
-//     })
-// }
 function displayMovies(moviesToDisplay) {
     const container = document.querySelector('.films-page__films-container');
     if (!container) return;
@@ -481,35 +394,6 @@ function renderPagination(totalPages, currentPage) {
     }
 }
 
-
-// async function loadSlider() {
-//     try {
-//         const response = await fetch(`http://89.109.16.50:7002/animation/find-animation?sortBy=rating&&order=desc&limit=10`);
-//         const result = await response.json();
-//         console.log(result);
-//
-//         if (result.success) {
-//             const sliderContElement = document.querySelector('.films-slider__films-group');
-//             sliderContElement.innerHTML = '';
-//
-//             result.data.forEach(card => {
-//                 const cardElement = `
-//                     <div class="films-group__film-card">
-//                         <a href="movieframe.html?id=${card.id}">
-//                             <img src="${card.imageLink}">
-//                         </a>
-//                     </div>`;
-//                 sliderContElement.insertAdjacentHTML('beforeend', cardElement);
-//             })
-//
-//             return result.data;
-//         }
-//     }
-//     catch (error) {
-//         console.log(error);
-//     }
-//
-// }
 async function loadSlider() {
     const sliderContElement = document.querySelector('.films-slider__films-group');
     if (!sliderContElement) return; // Защита: если нет слайдера, выходим
@@ -534,27 +418,6 @@ async function loadSlider() {
         console.error('Ошибка слайдера:', error);
     }
 }
-
-
-// const categoryLinksElement = document.querySelectorAll('.suggestion-page__category')
-//
-// categoryLinksElement.forEach(link => {
-//     link.addEventListener('click', async (event) => {
-//         event.preventDefault();
-//
-//         const text = event.target.innerText.toLowerCase();
-//
-//         let category = '';
-//         if (text.includes('фильмы')) category = 'film';
-//         if (text.includes('сериалы')) category = 'serial';
-//         if (text.includes('мультфильмы')) category = 'multfilm';
-//         if (text.includes('аниме')) category = 'anime';
-//
-//         console.log("категории:", category);
-//
-//         await loadCategoryWithFilter({category: category});
-//     })
-// })
 
 // Обернем в функцию, чтобы вызывать когда нужно
 function initCategoryFilters() {
@@ -637,67 +500,6 @@ async function loadCategoryWithFilter(filterObj) {
         console.log(error);
     }
 }
-
-// async function loadGenres() {
-//     try {
-//         const response = await fetch(`http://89.109.16.50:7002/animation/tags`);
-//         const result = await response.json();
-//
-//         if (result.success) {
-//             const genreCont = document.querySelector('.suggestions-page__abt2');
-//             genreCont.innerHTML = '';
-//
-//             result.data.forEach(tag => {
-//                 const pElement = document.createElement('p')
-//                 pElement.innerHTML = `<a href="#" class="suggestions-page__genre-item" data-name="${tag.name}">${tag.name}</a>`;
-//                 genreCont.appendChild(pElement);
-//             });
-//
-//             document.querySelectorAll('.suggestions-page__genre-item').forEach(link => {
-//                 link.addEventListener('click', (e) => {
-//                     e.preventDefault();
-//                     const genreName = e.target.getAttribute('data-name');
-//
-//                     currentFilters.tag = genreName;
-//                     currentFilters.category = '';
-//                     currentFilters.search = '';
-//                     pagination(1);
-//                 })
-//             })
-//         }
-//     } catch (e) { console.log(e); }
-// }
-
-// async function loadGenres() {
-//     const genreCont = document.querySelector('.suggestions-page__abt2');
-//     if (!genreCont) return; // Защита: если нет блока жанров, выходим
-//
-//     try {
-//         const response = await fetch(`http://89.109.16.50:7002/animation/tags`);
-//         const result = await response.json();
-//
-//         if (result.success) {
-//             genreCont.innerHTML = '';
-//             result.data.forEach(tag => {
-//                 const pElement = document.createElement('p');
-//                 pElement.innerHTML = `<a href="#" class="suggestions-page__genre-item" data-name="${tag.name}">${tag.name}</a>`;
-//                 genreCont.appendChild(pElement);
-//             });
-//
-//             document.querySelectorAll('.suggestions-page__genre-item').forEach(link => {
-//                 link.addEventListener('click', (e) => {
-//                     e.preventDefault();
-//                     currentFilters.tag = e.target.getAttribute('data-name');
-//                     currentFilters.category = '';
-//                     currentFilters.search = '';
-//                     pagination(1);
-//                 });
-//             });
-//         }
-//     } catch (e) {
-//         console.error('Ошибка жанров:', e);
-//     }
-// }
 
 async function loadGenres() {
     const genreCont = document.querySelector('.suggestions-page__abt2');
@@ -837,81 +639,6 @@ async function loadMovieDetails() {
         document.querySelector('.player-frame__player').innerHTML = `<iframe class="player-frame__iframe" src="${movie.iframe}"></iframe>`;
     }
 }
-// async function loadMovieDetails() {
-//     const params = new URLSearchParams(window.location.search);
-//     const id = params.get('id');
-//     if (!id) return;
-//
-//     try {
-//         const response = await fetch(`/api/animation/${id}`);
-//         const result = await response.json();
-//
-//         if (result.success) {
-//             // ПРОВЕРКА СТРУКТУРЫ: берем данные либо из .data.data, либо просто из .data
-//             const item = result.data?.data || result.data;
-//             console.log("Что прислал сервак:", result.data);
-//
-//             if (!item) {
-//                 console.error("Данные не найдены в ответе сервера");
-//                 return;
-//             }
-//
-//             // 1. Установка заголовков и текстов
-//             document.querySelector('#name').innerText = item.name || item.russianName || 'Без названия';
-//
-//             // 2. Плеер (Самое важное!)
-//             // Пробуем разные варианты названий поля с плеером
-//             const videoUrl = item.iframe || item.playerLink || item.link;
-//             const playerCont = document.querySelector('.player-frame__player');
-//
-//             if (playerCont) {
-//                 if (videoUrl) {
-//                     playerCont.innerHTML = `<iframe class="player-frame__iframe" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
-//                 } else {
-//                     playerCont.innerHTML = `<div class="no-player">Плеер для этого типа контента (${item.category}) еще не добавлен</div>`;
-//                 }
-//             }
-//
-//             // 3. Остальные поля
-//             if (item.imageLink) {
-//                 const imgCont = document.querySelector('.banner-info__banner-image');
-//                 if (imgCont) imgCont.innerHTML = `<img src="${item.imageLink}" style="border: 1px solid gold;">`;
-//             }
-//
-//             // Безопасная отрисовка рейтинга
-//             const ratingElem = document.querySelector('#rating');
-//             if (ratingElem) {
-//                 ratingElem.innerHTML = `<p style="font-size: 14px; color: #8F8F8F">Рейтинг: ${item.rating || '0'}/10</p>`;
-//             }
-//
-//             console.log("Данные загружены успешно для категории:", item.category);
-//             console.log("КЛЮЧИ ОБЪЕКТА:", Object.keys(item));
-//             console.log("ЗНАЧЕНИЕ IFRAME:", item.iframe);
-//             console.log("ЗНАЧЕНИЕ LINK:", item.link);
-//         }
-//     } catch (error) {
-//         console.error("Критическая ошибка при загрузке деталей:", error);
-//     }
-// }
-
-// const changeThemeBtn = document.querySelector('#theme-toggle');
-// const headerElement = document.querySelector('.header');
-// const mainSliderElement = document.querySelector('.main__films')
-// const mainSideBarElement = document.querySelector('.suggestions-page__suggestions');
-// const mainSuggestionsPageElement = document.querySelector('.suggestions-page__films-page');
-// const footerElement = document.querySelector('.footer');
-// const mainSignInForms = document.querySelector('.main__forms')
-//
-// changeThemeBtn.addEventListener('click', (e) => {
-//     e.preventDefault();
-//     headerElement.classList.toggle('light-theme-header');
-//     mainSliderElement.classList.toggle('light-theme-main');
-//     mainSideBarElement.classList.toggle('light-theme-main');
-//     mainSuggestionsPageElement.classList.toggle('light-theme-main');
-//     footerElement.classList.toggle('light-theme-footer');
-//     signInWindowElement.classList.toggle('light-theme-main');
-//     signUpWindowElement.classList.toggle('light-theme-main');
-//     mainSignInForms.classList.toggle('light-theme-main');})
 
 const themeToggle = document.querySelector('#theme-toggle');
 const body = document.body;
@@ -940,6 +667,184 @@ if (themeToggle) {
     themeToggle.addEventListener('click', toggleTheme);
 }
 
+function initRandomButton() {
+    const randomBtn = document.querySelector('.films-page__random-film-btn button');
+
+    if (randomBtn) {
+        randomBtn.onclick = (e) => {
+            e.preventDefault();
+
+            if (allMoviesGlobal && allMoviesGlobal.length > 0) {
+                // Выбираем случайный фильм из массива
+                const randomIndex = Math.floor(Math.random() * allMoviesGlobal.length);
+                const randomMovie = allMoviesGlobal[randomIndex];
+
+                // Летим на страницу плеера
+                window.location.href = `movieframe.html?id=${randomMovie.id}`;
+            } else {
+                alert("ошибко!");
+            }
+        };
+    }
+}
+
+// Имитация обновления профиля (сохраняем только в браузере)
+async function updateProfileLocal(newLogin) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const rawData = localStorage.getItem('user');
+            if (rawData) {
+                let userData = JSON.parse(rawData);
+                userData.login = newLogin;
+                localStorage.setItem('user', JSON.stringify(userData)); // Сохраняем в память браузера
+                console.log("Логин успешно обновлен в localStorage:", newLogin);
+            }
+            resolve(true);
+        }, 300); // Небольшая задержка для реалистичности
+    });
+}
+
+// Логика редактирования логина по клику
+function initProfileEdit() {
+    const loginElem = document.querySelector('#profile-login');
+    if (!loginElem) return;
+
+    // Стилизуем, чтобы юзер понял, что можно кликнуть
+    loginElem.style.cursor = 'pointer';
+    loginElem.title = "Нажми, чтобы изменить логин";
+
+    loginElem.onclick = () => {
+        const currentLogin = loginElem.innerText;
+
+        // Создаем поле ввода
+        const input = document.createElement('input');
+        input.value = currentLogin;
+        input.classList.add('profile__login-input'); // Класс для CSS
+
+        // Стилизуем инпут прямо в JS для быстроты
+        input.style.fontSize = 'inherit';
+        input.style.fontFamily = 'inherit';
+        input.style.color = 'inherit';
+        input.style.background = 'rgba(255,255,255,0.1)';
+        input.style.border = '1px solid gold';
+        input.style.borderRadius = '4px';
+        input.style.padding = '2px 8px';
+
+        loginElem.replaceWith(input);
+        input.focus();
+
+        const saveChanges = async () => {
+            const newLogin = input.value.trim();
+            if (newLogin && newLogin !== currentLogin) {
+                await updateProfileLocal(newLogin);
+                loginElem.innerText = newLogin;
+
+                // Опционально: если хочешь, чтобы имя сразу сменилось в хедере,
+                // можно вызвать checkAuth() еще раз, если она обновляет текст
+                checkAuth();
+            }
+            input.replaceWith(loginElem);
+        };
+
+        // Сохранение по Enter, отмена по Esc
+        input.onkeydown = (e) => {
+            if (e.key === 'Enter') saveChanges();
+            if (e.key === 'Escape') input.replaceWith(loginElem);
+        };
+
+        // Сохранение при потере фокуса
+        input.onblur = saveChanges;
+    };
+}
+
+// Функция для отрисовки всех комментов этого фильма
+function displayComments(movieId) {
+    const container = document.querySelector('#comments-container');
+    if (!container) return;
+
+    // Достаем из памяти все комменты или создаем пустой массив
+    const allComments = JSON.parse(localStorage.getItem('movie_comments') || '{}');
+    const movieComments = allComments[movieId] || [];
+
+    container.innerHTML = movieComments.map(c => `
+        <div class="comment-item" style="border-bottom: 1px solid #333; padding: 10px 0;">
+            <strong style="color: gold;">${c.user}:</strong>
+            <p style="margin: 5px 0;">${c.text}</p>
+            <small style="color: #666;">${c.date}</small>
+        </div>
+    `).join('') || '<p>Оставьте комментарий✌🤙🎈!</p>';
+}
+
+// Инициализация формы комментов
+function initComments() {
+    const sendBtn = document.querySelector('#send-comment');
+    const textArea = document.querySelector('#comment-text');
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get('id');
+
+    if (!sendBtn || !movieId) return;
+
+    sendBtn.onclick = () => {
+        const userRaw = localStorage.getItem('user');
+        if (!userRaw) {
+            alert("Войдите в аккаунт, чтобы оставить комментарий");
+            return;
+        }
+
+        const userData = JSON.parse(userRaw);
+        const text = textArea.value.trim();
+
+        if (text) {
+            const allComments = JSON.parse(localStorage.getItem('movie_comments') || '{}');
+            if (!allComments[movieId]) allComments[movieId] = [];
+
+            // Добавляем новый коммент в начало
+            allComments[movieId].unshift({
+                user: userData.login,
+                text: text,
+                date: new Date().toLocaleString()
+            });
+
+            localStorage.setItem('movie_comments', JSON.stringify(allComments));
+            textArea.value = ''; // Чистим поле
+            displayComments(movieId); // Перерисовываем
+        }
+    };
+
+    displayComments(movieId);
+}
+
+function initReactions() {
+    const reactionBtn = document.querySelector('#like-movie-btn'); // Добавь такую кнопку в HTML
+    if (!reactionBtn) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const movieId = params.get('id');
+
+    // Проверяем, лайкал ли уже
+    const likes = JSON.parse(localStorage.getItem('movie_likes') || '[]');
+    if (likes.includes(movieId)) {
+        reactionBtn.classList.add('active');
+        reactionBtn.innerText = '❤️ В избранном';
+    }
+
+    reactionBtn.onclick = () => {
+        let currentLikes = JSON.parse(localStorage.getItem('movie_likes') || '[]');
+
+        if (currentLikes.includes(movieId)) {
+            currentLikes = currentLikes.filter(id => id !== movieId);
+            reactionBtn.classList.remove('active');
+            reactionBtn.innerText = '🤍 Лайк';
+        } else {
+            currentLikes.push(movieId);
+            reactionBtn.classList.add('active');
+            reactionBtn.innerText = '❤️ В избранном';
+        }
+
+        localStorage.setItem('movie_likes', JSON.stringify(currentLikes));
+    };
+}
+
 if (window.location.pathname.includes('movieframe.html')) {
     loadMovieDetails();
 }
@@ -954,6 +859,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initTiltEffect();
 
+    initRandomButton();
+
     initDropdownFilters();
 
     // 2. Жанры грузим один раз для всех страниц
@@ -963,6 +870,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (document.querySelector('.main__profile')) {
         handleProfilePage();
         // Загружаем только если в памяти есть юзер
+        initProfileEdit();
+
         if (localStorage.getItem('user')) {
             console.log("Запрашиваем избранное...");
             loadUserFavorites();
@@ -985,5 +894,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 5. Логика для ПЛЕЕРА
     if (document.querySelector('.player-frame__player')) {
         loadMovieDetails();
+        initComments();
+        initReactions();
     }
 });
